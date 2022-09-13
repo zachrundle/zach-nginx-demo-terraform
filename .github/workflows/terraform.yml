@@ -47,7 +47,7 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
-            \`\`\`${process.PLAN}\`\`\`
+            \`\`\`${{ steps.plan.outputs.stdout }}\`\`\`
             </details>
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
               
