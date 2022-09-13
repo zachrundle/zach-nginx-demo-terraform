@@ -24,7 +24,7 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: terraform fmt
 
       - name: Terraform Init
         id: init
@@ -47,7 +47,7 @@ jobs:
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
-            \`\`\`${process.env.PLAN}\`\`\`
+            \`\`\`${{ steps.plan.outputs.stdout }}\`\`\`
             </details>
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
               
@@ -66,7 +66,7 @@ jobs:
           go-version: '^1.15.5'
 
       - name: Terraform Apply Global
-        if: github.event_name == 'push' || github.event_name == 'release'
+        if: github.event_name == 'push' || github.event_name == 'merge'
         run: |
           terraform init
           terraform apply -auto-approve          
