@@ -121,7 +121,7 @@ module "eks" {
     blue = {}
     green = {
       min_size     = 1
-      max_size     = 2
+      max_size     = 3
       desired_size = 1
 
       instance_types = [var.default_instance_type]
