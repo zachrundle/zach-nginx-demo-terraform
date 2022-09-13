@@ -1,8 +1,9 @@
 name: "Terraform"
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
   pull_request:
 
 jobs:
@@ -14,7 +15,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -29,6 +30,10 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
