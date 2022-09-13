@@ -1,12 +1,12 @@
-variable region {
-    type = string
+variable "region" {
+  type = string
 }
 
-variable name {
-    type = string
+variable "name" {
+  type = string
 }
 
-variable default_instance_type {
+variable "default_instance_type" {
 
 }
 
