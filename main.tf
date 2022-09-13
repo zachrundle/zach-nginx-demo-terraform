@@ -82,6 +82,8 @@ data "aws_ssm_parameter" "eks-kms-key" {
   name = "nginx-demo-eks-kms-key"
 }
 
+data "aws_caller_identity" "current" {}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.0"
@@ -103,7 +105,7 @@ module "eks" {
   }
 
   cluster_encryption_config = [{
-    provider_key_arn = "arn:aws:kms:us-east-1:528422844475:key/a9387f7a-2bbc-4245-a22e-3b6a9ac28828"
+    provider_key_arn = "arn:aws:kms:us-east-1:${data.aws_caller_identity.current.account_id}:key/a9387f7a-2bbc-4245-a22e-3b6a9ac28828"
     resources        = ["secrets"]
   }]
 
@@ -134,7 +136,7 @@ module "eks" {
 
   aws_auth_roles = [
     {
-      rolearn  = "arn:aws:iam::528422844475:role/EKS-node-instance"
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EKS-node-instance"
       username = "system"
       groups   = ["system:masters"]
     },
@@ -142,14 +144,14 @@ module "eks" {
 
   aws_auth_users = [
     {
-      userarn  = "arn:aws:iam::528422844475:user/zachrundle"
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/zachrundle"
       username = "zachrundle"
       groups   = ["system:masters"]
     }
   ]
 
   aws_auth_accounts = [
-    "528422844475"
+    "${data.aws_caller_identity.current.account_id}"
   ]
 
   tags = {
