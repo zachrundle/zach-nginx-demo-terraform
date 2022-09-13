@@ -33,10 +33,11 @@ jobs:
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan
+        run: terraform plan -no-color -input=false
         continue-on-error: true
 
-      - uses: actions/github-script@0.9.0
+      - name: Update Pull Request
+        uses: actions/github-script@6
         if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
@@ -46,27 +47,30 @@ jobs:
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+
             <details><summary>Show Plan</summary>
-            \`\`\`${{ steps.plan.outputs.stdout }}\`\`\`
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
             </details>
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-              
-            github.issues.createComment({
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
             })
+
+
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '^1.15.5'
-
-      - name: Terraform Apply Global
-        if: github.event_name == 'push' || github.event_name == 'merge'
-        run: |
-          terraform init
-          terraform apply -auto-approve          
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false        
