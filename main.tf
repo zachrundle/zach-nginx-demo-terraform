@@ -10,7 +10,7 @@ terraform {
   required_providers {
     aws = {
       version = ">= 2.7.0"
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
     }
   }
 }
@@ -57,20 +57,20 @@ resource "aws_dynamodb_table" "terraform_locks" {
 # Creating VPC using official/verified AWS module found at: https://github.com/terraform-aws-modules/terraform-aws-vpc 
 module "nginx-demo-vpc" {
   version = "~> 3.14.0"
-  source = "terraform-aws-modules/vpc/aws"
-  
+  source  = "terraform-aws-modules/vpc/aws"
+
   name = join("-", [var.name, "vpc"])
   cidr = "10.0.0.0/16"
 
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  private_subnets = ["10.0.1.0/24","10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24","10.0.102.0/24"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
   enable_nat_gateway = true
 
   tags = {
     Terraform = "true"
-    Solution = var.name
+    Solution  = var.name
   }
 }
 # using data block for latest Amazon Linux AMI
@@ -107,8 +107,8 @@ module "eks" {
     resources        = ["secrets"]
   }]
 
-  vpc_id     = "${module.nginx-demo-vpc.vpc_id}"
-  subnet_ids = "${module.nginx-demo-vpc.private_subnets}"
+  vpc_id     = module.nginx-demo-vpc.vpc_id
+  subnet_ids = module.nginx-demo-vpc.private_subnets
 
 
   # EKS Managed Node Group(s)
@@ -121,7 +121,7 @@ module "eks" {
     blue = {}
     green = {
       min_size     = 1
-      max_size     = 2
+      max_size     = 3
       desired_size = 1
 
       instance_types = [var.default_instance_type]
@@ -153,8 +153,8 @@ module "eks" {
   ]
 
   tags = {
-    Name = "zach-nginx-demo"
-    Terraform   = "true"
+    Name      = "zach-nginx-demo"
+    Terraform = "true"
   }
 }
 
