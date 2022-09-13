@@ -4,6 +4,7 @@ on:
    push:
      branches:
        - main
+       - test
   release:
     types: [published]
   pull_request:
