@@ -160,3 +160,4 @@ module "eks" {
   }
 }
 
+# the CLB that K8s svc created is not managed by Terraform yet.
