@@ -165,4 +165,29 @@ module "eks" {
 
 #ran terraform import since NLB was created by K8s service file
 resource "aws_lb" "NLB" {
+      enable_cross_zone_load_balancing = false
+      enable_deletion_protection = false
+      internal = false
+      ip_address_type = "ipv4"
+      load_balancer_type = "network"
+      name = "a8bdc1a5f27d047baa8ea178f3fc03d7"
+      security_groups = []
+      subnets = [
+          "subnet-02532e7063032b43a",
+          "subnet-0b62c66198deb2b3d",
+        ]
+      tags = {
+          "kubernetes.io/cluster/zach-nginx-demo" = "owned"
+          "kubernetes.io/service-name"            = "default/zach-nginx-demo"
+        }
+
+      subnet_mapping {
+          subnet_id = "subnet-02532e7063032b43a"
+        }
+      subnet_mapping {
+          subnet_id = "subnet-0b62c66198deb2b3d"
+        }
+      timeouts {}
 }
+
+
