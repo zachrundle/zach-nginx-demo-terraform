@@ -191,3 +191,59 @@ resource "aws_lb" "NLB" {
 }
 
 
+# Configure Prometheus server for monitoring (still work in progress)
+
+resource "aws_security_group" "prometheus" {
+  name        = "nginx-demo-prometheus"
+  description = "prometheus monitoring server"
+  vpc_id      = module.nginx-demo-vpc.vpc_id
+
+
+  ingress {
+    description = "HTTP"
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_network_interface" "web-server-nic" {
+  subnet_id       = "10.0.2.0/24"
+  private_ips     = ["10.0.2.50"]
+  security_groups = [aws_security_group.prometheus.id]
+}
+
+
+resource "aws_instance" "prometheus" {
+  ami           = data.aws_ssm_parameter.amzn-ami.id
+  instance_type = "t3.micro"
+  availability_zone = "us-east-1a"
+  key_name      = "prometheus"
+  network_interface {
+    device_index         = 0
+    network_interface_id = aws_network_interface.web-server-nic.id
+  }
+
+  user_data = <<-EOF
+      #!/bin/bash
+      wget https://github.com/prometheus/prometheus/releases/download/v2.37.1/prometheus-2.37.1.linux-amd64.tar.gz
+      sleep 2m
+      tar -xzf prometheus-2.37.1.linux-amd64.tar.gz
+      sleep 10
+      cd prometheus-2.37.1.linux-amd64/
+      ./prometheus
+      EOF
+
+  tags = {
+    Name = "prometheus"
+  }
+}
+
