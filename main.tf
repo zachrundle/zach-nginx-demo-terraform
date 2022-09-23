@@ -216,7 +216,7 @@ resource "aws_security_group" "prometheus" {
 }
 
 resource "aws_network_interface" "web-server-nic" {
-  subnet_id       = "10.0.2.0/24"
+  subnet_id       = module.nginx-demo-vpc.private_subnets
   private_ips     = ["10.0.2.50"]
   security_groups = [aws_security_group.prometheus.id]
 }
