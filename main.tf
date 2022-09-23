@@ -23,6 +23,10 @@ resource "aws_s3_bucket" "terraform_state" {
   bucket = "zach-nginx-demo-tf"
 }
 
+resource "aws_s3_bucket" "monitoring_storage" {
+  bucket = "zach-nginx-demo-cloudwatch-logs"
+}
+
 resource "aws_s3_bucket_acl" "bucket_acl" {
   bucket = aws_s3_bucket.terraform_state.bucket
   acl    = "private"
