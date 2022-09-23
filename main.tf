@@ -121,16 +121,16 @@ module "eks" {
 
   eks_managed_node_groups = {
     nginx_demo_node_group1 = {}
-    nginx_demo_node_group1 = {
+    nginx_demo_node_group2 = {
       min_size     = 1
       max_size     = 3
       desired_size = 1
 
       instance_types = [var.default_instance_type]
       capacity_type  = "ON_DEMAND"
-    }
-     update_config = {
-    max_unavailable_percentage = 50 # or set `max_unavailable`
+      update_config = {
+      max_unavailable_percentage = 50 # or set `max_unavailable`
+      }
     }
   }
 
