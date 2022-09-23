@@ -163,4 +163,6 @@ module "eks" {
   }
 }
 
-# the CLB that K8s svc created is not managed by Terraform yet.
+#ran terraform import since NLB was created by K8s service file
+resource "aws_lb" "NLB" {
+}
