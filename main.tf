@@ -225,7 +225,7 @@ resource "aws_network_interface" "web-server-nic" {
 resource "aws_instance" "prometheus" {
   ami           = data.aws_ssm_parameter.amzn-ami.value
   instance_type = "t3.micro"
-  availability_zone = "us-east-1a"
+  availability_zone = "us-east-1b"
   key_name      = "prometheus"
   network_interface {
     device_index         = 0
